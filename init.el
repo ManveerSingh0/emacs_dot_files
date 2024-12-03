@@ -17,32 +17,63 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)  ; Use Helm for finding files
 (global-set-key (kbd "C-x b") 'helm-buffers-list)  ; Use Helm for buffer list
 
+;; Set default coding system to UTF-8
+(prefer-coding-system 'utf-8)
+(setq buffer-file-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+(setq coding-system-for-read 'utf-8)
+(setq coding-system-for-write 'utf-8)
+
+;; (use-package eaf
+;;   :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+;;   :custom
+;;   ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+;;   (eaf-browser-continue-where-left-off t)
+;;   (eaf-browser-enable-adblocker t)
+;;   (browse-url-browser-function 'eaf-open-browser)
+;;   :config
+;;   (defalias 'browse-web #'eaf-open-browser)
+;;   (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+;;   (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+;;   (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+;;   (eaf-bind-key nil "M-q" eaf-browser-keybinding)) ;; unbind, see more in the Wiki
+;; (require 'eaf-browser)
+
+
+
+
 ;; Key bindings for buffer/window movement using windmove
-(global-set-key (kbd "M-h") 'windmove-left)
-(global-set-key (kbd "M-j") 'windmove-down)
-(global-set-key (kbd "M-k") 'windmove-up)
-(global-set-key (kbd "M-l") 'windmove-right)
+(global-set-key (kbd "C-c j") 'windmove-left)
+(global-set-key (kbd "C-c k") 'windmove-down)
+(global-set-key (kbd "C-c l") 'windmove-up)
+(global-set-key (kbd "C-c ;") 'windmove-right)
+
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t)))
+
 
 ;; Set the default font
-(set-frame-font "Iosevka Bold-12" nil t)  ; Font is set to Iosevka Bold, size 14
+;;(set-frame-font "Iosevka Bold-12" nil t)  ; Font is set to Iosevka Bold, size 14
 
 ;; Disable toolbar and menu bar
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 
-;; Smooth scrolling settings
-(setq scroll-conservatively 10000
-      scroll-margin 0
-      scroll-step 1
-      scroll-preserve-screen-position t)
+;; ;; Smooth scrolling settings
+;; (setq scroll-conservatively 10000
+;;       scroll-margin 0
+;;       scroll-step 1
+;;       scroll-preserve-screen-position t)
 
-;; Optional: Enable smooth scrolling
-(use-package smooth-scrolling
-  :ensure t
-  :config
-  (smooth-scrolling-mode 1)
-  (setq smooth-scroll-margin 1))
-
+;; ;; Optional: Enable smooth scrolling
+;; (use-package smooth-scrolling
+;;   :ensure t
+;;   :config
+;;   (smooth-scrolling-mode 1)
+;;   (setq smooth-scroll-margin 1))
+ 
 ;; Disable backup, auto-save, and lock files
 (setq make-backup-files nil)      ; Disable backup files (ending with ~)
 (setq auto-save-default nil)      ; Disable auto-save files (starting/ending with #)
@@ -110,22 +141,24 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-mode lsp)
+ '(company-mode lsp t)
  '(custom-safe-themes
    '("8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f" default))
  '(global-display-line-numbers-mode t)
  '(lsp nil)
  '(package-selected-packages
-   '(monokai-theme company lsp-ui lsp-mode smartparens dracula-theme))
- '(smartparens-mode company-mode))
+   '(evil evil-visual-mark-mode cmake-mode monokai-theme company lsp-ui lsp-mode smartparens dracula-theme))
+ '(smartparens-mode company-mode t)
+ '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:family "Source Code Pro" :foundry "ADBO" :slant normal :weight regular :height 128 :width normal)))))
 
 
 
 
 
+(put 'set-goal-column 'disabled nil)
