@@ -6,7 +6,7 @@
 (package-initialize)
 
 ;; Load theme
-(load-theme 'monokai t)
+(load-theme 'misterioso t)
 
 ;; Load Helm from the specified path and enable it
 (add-to-list 'load-path "~/.emacs.d/helm")
@@ -141,14 +141,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-mode lsp t)
+ '(company-mode lsp)
  '(custom-safe-themes
-   '("8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f" default))
+   '("95b0bc7b8687101335ebbf770828b641f2befdcf6d3c192243a251ce72ab1692" "8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f" default))
  '(global-display-line-numbers-mode t)
  '(lsp nil)
  '(package-selected-packages
-   '(evil evil-visual-mark-mode cmake-mode monokai-theme company lsp-ui lsp-mode smartparens dracula-theme))
- '(smartparens-mode company-mode t)
+   '(pdf-tools evil evil-visual-mark-mode cmake-mode monokai-theme company lsp-ui lsp-mode smartparens dracula-theme))
+ '(smartparens-mode company-mode)
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
