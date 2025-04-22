@@ -1,164 +1,62 @@
-;; Initialize package sources
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;; Uncomment below to enable MELPA Stable if needed
-;; (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(package-initialize)
+ ;;(elpaca-no-symlink-mode) ; Keep commented unless needed
+(setq package-enable-at-startup nil)
+(defvar elpaca-installer-version 0.11)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1 :inherit ignore
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
 
-;; Load theme
-(load-theme 'misterioso t)
+(let* ((repo (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (<= emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                  ,@(when-let* ((depth (plist-get order :depth)))
+                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                  ,(plist-get order :repo) ,repo))))
+                  ((zerop (call-process "git" nil buffer t "checkout"
+                                        (or (plist-get order :ref) "--"))))
+                  (emacs (concat invocation-directory invocation-name))
+                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                  ((require 'elpaca))
+                  ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive)))))
 
-;; Load Helm from the specified path and enable it
-(add-to-list 'load-path "~/.emacs.d/helm")
-(helm-mode 1)
+(unless (require 'elpaca-autoloads nil t)
+  (require 'elpaca)
+  (elpaca-generate-autoloads "elpaca" repo)
+  (let ((load-source-file-function nil)) (load "./elpaca-autoloads")))
 
-;; Key bindings for Helm
-(global-set-key (kbd "M-x") 'helm-M-x)  ; Replace M-x with Helm's version
-(global-set-key (kbd "C-x C-f") 'helm-find-files)  ; Use Helm for finding files
-(global-set-key (kbd "C-x b") 'helm-buffers-list)  ; Use Helm for buffer list
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode))
 
-;; Set default coding system to UTF-8
-(prefer-coding-system 'utf-8)
-(setq buffer-file-coding-system 'utf-8)
-(setq default-buffer-file-coding-system 'utf-8)
-(setq coding-system-for-read 'utf-8)
-(setq coding-system-for-write 'utf-8)
-
-;; (use-package eaf
-;;   :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
-;;   :custom
-;;   ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-;;   (eaf-browser-continue-where-left-off t)
-;;   (eaf-browser-enable-adblocker t)
-;;   (browse-url-browser-function 'eaf-open-browser)
-;;   :config
-;;   (defalias 'browse-web #'eaf-open-browser)
-;;   (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-;;   (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-;;   (eaf-bind-key take_photo "p" eaf-camera-keybinding)
-;;   (eaf-bind-key nil "M-q" eaf-browser-keybinding)) ;; unbind, see more in the Wiki
-;; (require 'eaf-browser)
-
-
-
-
-;; Key bindings for buffer/window movement using windmove
-(global-set-key (kbd "C-c j") 'windmove-left)
-(global-set-key (kbd "C-c k") 'windmove-down)
-(global-set-key (kbd "C-c l") 'windmove-up)
-(global-set-key (kbd "C-c ;") 'windmove-right)
-
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((shell . t)))
-
-
-;; Set the default font
-;;(set-frame-font "Iosevka Bold-12" nil t)  ; Font is set to Iosevka Bold, size 14
-
-;; Disable toolbar and menu bar
-(tool-bar-mode -1)
+(setq make-backup-files nil)
 (menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(global-display-line-numbers-mode)
 
-;; ;; Smooth scrolling settings
-;; (setq scroll-conservatively 10000
-;;       scroll-margin 0
-;;       scroll-step 1
-;;       scroll-preserve-screen-position t)
+(load-theme 'leuven-dark t)
 
-;; ;; Optional: Enable smooth scrolling
-;; (use-package smooth-scrolling
-;;   :ensure t
-;;   :config
-;;   (smooth-scrolling-mode 1)
-;;   (setq smooth-scroll-margin 1))
- 
-;; Disable backup, auto-save, and lock files
-(setq make-backup-files nil)      ; Disable backup files (ending with ~)
-(setq auto-save-default nil)      ; Disable auto-save files (starting/ending with #)
-(setq create-lockfiles nil)       ; Disable lock files (starting with .#)
 
-;;To ignore -- in eshell
-(setq browse-url-browser-function 'ignore)
+(use-package elgot
+  :ensure (:host github :repo "joaotavora/eglot" :files ("eglot.el" (:exclude ".git"))))
 
-;; Ensure lsp-mode is installed
-(use-package lsp-mode
-  :ensure t
-  :hook (c++-mode . lsp)  ; Start LSP mode in C++ files
-  :commands lsp
-  :config
-  (setq lsp-clients-clangd-args '("--compile-commands-dir=build")))  ; Configure LSP for C++
-
-;; Ensure company-mode is installed
 (use-package company
-  :ensure t
-  :hook (c++-mode . company-mode)  ; Start company mode in C++ files
-  :config
-  (setq company-idle-delay 0.1  ; Delay before suggestions pop up
-        company-minimum-prefix-length 1))  ; Show suggestions after typing 1 character
-
-;; Ensure smartparens is installed
+    :ensure t)
 (use-package smartparens
-  :ensure t
-  :hook (c++-mode . smartparens-mode)  ; Start smartparens in C++ files
-  :config
-  (require 'smartparens-config)  ; Load the default configuration
-  (sp-local-pair 'c++-mode "{" "}")
-  (sp-local-pair 'c++-mode "(" ")"))
-
-;; Optional: Enable which-key for easier keybinding discovery
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode))
-
-
-
-;; Install Projectile
-(use-package projectile
-  :ensure t
-  :init
-  (projectile-mode +1)
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :config
-  ;; Use Helm for Projectile
-  (setq projectile-completion-system 'helm))
-
-;; Install Helm Projectile for fuzzy searching in projects
-(use-package helm-projectile
-  :ensure t
-  :config
-  (helm-projectile-on))
-
-
-
-
-;; Custom-set variables and faces (this section is auto-generated by Emacs)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(company-mode lsp)
- '(custom-safe-themes
-   '("95b0bc7b8687101335ebbf770828b641f2befdcf6d3c192243a251ce72ab1692" "8dbbcb2b7ea7e7466ef575b60a92078359ac260c91fe908685b3983ab8e20e3f" default))
- '(global-display-line-numbers-mode t)
- '(lsp nil)
- '(package-selected-packages
-   '(pdf-tools evil evil-visual-mark-mode cmake-mode monokai-theme company lsp-ui lsp-mode smartparens dracula-theme))
- '(smartparens-mode company-mode)
- '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro" :foundry "ADBO" :slant normal :weight regular :height 128 :width normal)))))
-
-
-
-
-
-(put 'set-goal-column 'disabled nil)
+  :ensure t)
