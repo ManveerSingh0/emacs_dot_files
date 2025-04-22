@@ -44,7 +44,36 @@
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
+(global-set-key (kbd "C-c j") 'windmove-left)
+(global-set-key (kbd "C-c k") 'windmove-down)
+(global-set-key (kbd "C-c l") 'windmove-up)
+(global-set-key (kbd "C-c ;") 'windmove-right)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (setq make-backup-files nil)
+(setq make-backup-files nil)      ; Disable backup files (ending with ~)
+(setq auto-save-default nil)      ; Disable auto-save files (starting/ending with #)
+(setq create-lockfiles nil)       ; Disable lock files (starting with .#)
+
+
+
+
+
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
