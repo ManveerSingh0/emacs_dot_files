@@ -82,7 +82,7 @@
 (load-theme 'leuven-dark t)
 
 
-(use-package elgot
+(use-package eglot
   :ensure (:host github :repo "joaotavora/eglot" :files ("eglot.el" (:exclude ".git"))))
 
 (use-package company
