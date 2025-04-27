@@ -79,6 +79,12 @@
 (scroll-bar-mode -1)
 (global-display-line-numbers-mode)
 
+(defun set-local-tab()
+	(setq-local tab-width 2))
+
+(add-hook 'c++-mode 'set-local-tab)
+(add-hook 'emacs-lisp-mode 'set-local-tab)
+
 (load-theme 'leuven-dark t)
 
 
@@ -89,3 +95,20 @@
     :ensure t)
 (use-package smartparens
   :ensure t)
+
+
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
