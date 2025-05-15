@@ -117,6 +117,8 @@
   :config
   (setq dashboard-startup-banner "~/.emacs.d/logo/dashboard.png")
   (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-banner-logo-title "Welcome Manveer")
+  (setq dashboard-footer-messages '("Consistency is the key"))
   (setq dashboard-items '((recents . 5)
 			  (bookmarks . 5)))
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-list)
