@@ -82,10 +82,64 @@
 (load-theme 'leuven-dark t)
 
 
+
 (use-package eglot
-  :ensure (:host github :repo "joaotavora/eglot" :files ("eglot.el" (:exclude ".git"))))
+  :ensure (:host github :repo "joaotavora/eglot" :files ("eglot.el" (:exclude ".git")))
+  :hook
+  ;; (c++-mode . eglot-ensure)
+  ;; (emacs-lisp-mode  . eglot-ensure)
+  (c++-mode . eglot-ensure)
+  (emacs-lisp-mode . eglot-ensure))
 
 (use-package company
-    :ensure t)
+  :ensure t
+  :hook
+  (c++-mode . company-mode)
+  (emacs-lisp-mode  . company-mode))
+
+
 (use-package smartparens
+  :ensure t
+  :config
+  (smartparens-global-mode))
+
+(use-package cmake-mode
   :ensure t)
+(use-package vterm
+  :ensure t)
+
+(use-package magit
+  :ensure (:host github :repo "magit/magit"))
+
+
+(use-package dashboard
+  :ensure (:host github :repo "emacs-dashboard/emacs-dashboard")
+  :config
+  (setq dashboard-startup-banner "~/.emacs.d/logo/dashboard.png")
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-items '((recents . 5)
+			  (bookmarks . 5)))
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-list)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+  (dashboard-setup-startup-hook))
+
+
+(use-package projectile
+  :ensure t)
+
+
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(global-display-line-numbers-mode t)
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Adwaita Mono" :foundry "UKWN" :slant normal :weight regular :height 126 :width normal)))))
