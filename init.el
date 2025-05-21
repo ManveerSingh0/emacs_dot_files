@@ -135,6 +135,23 @@
   :ensure t)
 
 
+(use-package helm
+  :ensure (:host github :repo "emacs-helm/helm")
+  :config
+  (global-set-key (kbd "M-x") #'helm-M-x)
+  (global-set-key (kbd "C-x C-f") #'helm-find-files)
+  (global-set-key (kbd "C-x r b") #'helm-bookmarks)
+  (global-set-key (kbd "C-x b") #'helm-buffers-list))
+
+(use-package helm-projectile
+  :ensure (:host github :repo "bbatsov/helm-projectile")
+  :config
+  (helm-projectile-on) ; Enable Helm-Projectile integration
+  :bind
+  (("C-c p p" . helm-projectile-switch-project)
+   ("C-c p f" . helm-projectile-find-file)
+   ("C-c p s" . helm-projectile-switch-to-buffer)))
+
 
 
 (custom-set-variables
