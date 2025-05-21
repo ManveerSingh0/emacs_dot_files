@@ -10,3 +10,9 @@
 # Undo-tree save-files
 *.~undo-tree
 elpa/
+eln-cache/
+elpaca/
+eshell/
+recentf
+tramp
+transient/
